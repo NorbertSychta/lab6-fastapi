@@ -6,11 +6,23 @@ on:
 jobs:
   docker-deploy:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
+
+    # Zamiana repository_owner na małe litery
+    - name: Set lowercase owner
+      run: |
+        echo "OWNER_LC=${OWNER,,}" >> $GITHUB_ENV
+      env:
+        OWNER: ${{ github.repository_owner }}
+
     - name: Login to GHCR
       run: echo "${{ github.token }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
     - name: Build and push
       run: |
-        docker build -t ghcr.io/${{ github.repository_owner }}/python-app:latest .
-        docker push ghcr.io/${{ github.repository_owner }}/python-app:latest
+        IMAGE="ghcr.io/${OWNER_LC}/python-app:latest"
+        echo "Building image: $IMAGE"
+        docker build -t $IMAGE .
+        docker push $IMAGE
