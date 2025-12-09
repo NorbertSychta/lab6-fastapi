@@ -15,8 +15,9 @@ jobs:
         echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
     - name: Build and push image
+      env:
+        IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/lab6-fastapi:latest
       run: |
-        IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/lab6-fastapi:latest"
-        echo "Building image: $IMAGE"
-        docker build -t $IMAGE .
-        docker push $IMAGE
+        echo "Building image: $IMAGE_NAME"
+        docker build -t "$IMAGE_NAME" .
+        docker push "$IMAGE_NAME"
